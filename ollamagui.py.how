@@ -1,0 +1,7 @@
+GUI Framework: It uses customtkinter to create a modern-looking window with two main sections: a control panel on the left and a chat panel on the right.
+Controls: The sliders and input fields on the left allow you to change model parameters like temperature (creativity), top_p, etc., in real-time.
+Communication: When you press "Send", the application does not call llama.cpp directly. Instead, it sends an HTTP POST request to the llama.cpp server running at http://127.0.0.1:8080/completion.
+Streaming: It requests a stream of tokens. This is crucial for a good chat experience, as you see the response appear word by word instead of waiting for the full text.
+Threading: To prevent the GUI from freezing while waiting for the model's response, the network request is made in a separate threading.Thread.
+Queue: The background thread communicates back to the main GUI thread safely using a queue.Queue. It puts each token it receives into the queue.
+UI Updates: The main GUI loop periodically checks the queue for new tokens and updates the chat box, ensuring all UI modifications happen on the main thread, which is a requirement for most GUI toolkits.
