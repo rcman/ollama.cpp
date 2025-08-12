@@ -1,0 +1,11 @@
+How It Works
+GUI Structure: The program uses a JFrame as the main window and a JSplitPane to create the resizable left (controls) and right (chat) panels. Standard Swing components like JPanel, JLabel, JSlider, JTextArea, and JButton are used to build the interface.
+Slider Mapping: JSlider works with integers. We simulate float values by using a larger integer range (e.g., 0-200 for temperature) and then dividing by 100.0 when we need the actual float value for the API call.
+Thread Safety: All GUI operations in Swing must happen on a special thread called the Event Dispatch Thread (EDT).
+The main method uses SwingUtilities.invokeLater to create the GUI on the EDT.
+The long-running network operation (fetchModelResponse) is started in a new Thread() to avoid freezing the GUI.
+When the background thread receives data and needs to update the GUI (like adding text to the chatArea), it uses SwingUtilities.invokeLater to schedule that update to run safely back on the EDT.
+HTTP Communication: It uses the modern java.net.http.HttpClient to send a POST request. The BodyHandlers.ofInputStream() is key, as it allows us to read the server's response as a stream of data without waiting for the entire thing to finish.
+JSON Handling (The Hard Part):
+Request: The JSON payload is built using String.format(). This is simple and effective for a fixed structure. A helper method escapeJson handles special characters in the user's prompt.
+Response: The streaming response is read line by line. We check if a line starts with data:. If it does, we manually parse that line by looking for the "content":" key and extracting the text between the quotes. This avoids needing a full JSON parsing library.
