@@ -1,0 +1,95 @@
+model = Field(description='The path to the model to use for generating completions.') class-attribute instance-attribute
+
+model_alias = Field(default=None, description='The alias of the model to use for generating completions.') class-attribute instance-attribute
+
+n_gpu_layers = Field(default=0, ge=(-1), description='The number of layers to put on the GPU. The rest will be on the CPU. Set -1 to move all to GPU.') class-attribute instance-attribute
+
+split_mode = Field(default=(llama_cpp.LLAMA_SPLIT_MODE_LAYER), description='The split mode to use.') class-attribute instance-attribute
+
+main_gpu = Field(default=0, ge=0, description='Main GPU to use.') class-attribute instance-attribute
+
+tensor_split = Field(default=None, description='Split layers across multiple GPUs in proportion.') class-attribute instance-attribute
+
+vocab_only = Field(default=False, description='Whether to only return the vocabulary.') class-attribute instance-attribute
+
+use_mmap = Field(default=(llama_cpp.llama_supports_mmap()), description='Use mmap.') class-attribute instance-attribute
+
+use_mlock = Field(default=(llama_cpp.llama_supports_mlock()), description='Use mlock.') class-attribute instance-attribute
+
+kv_overrides = Field(default=None, description='List of model kv overrides in the format key=type:value where type is one of (bool, int, float). Valid true values are (true, TRUE, 1), otherwise false.') class-attribute instance-attribute
+
+rpc_servers = Field(default=None, description='comma seperated list of rpc servers for offloading') class-attribute instance-attribute
+
+seed = Field(default=(llama_cpp.LLAMA_DEFAULT_SEED), description='Random seed. -1 for random.') class-attribute instance-attribute
+
+n_ctx = Field(default=2048, ge=0, description='The context size.') class-attribute instance-attribute
+
+n_batch = Field(default=512, ge=1, description='The batch size to use per eval.') class-attribute instance-attribute
+
+n_ubatch = Field(default=512, ge=1, description='The physical batch size used by llama.cpp') class-attribute instance-attribute
+
+n_threads = Field(default=(max(multiprocessing.cpu_count() // 2, 1)), ge=1, description='The number of threads to use. Use -1 for max cpu threads') class-attribute instance-attribute
+
+n_threads_batch = Field(default=(max(multiprocessing.cpu_count(), 1)), ge=0, description='The number of threads to use when batch processing. Use -1 for max cpu threads') class-attribute instance-attribute
+
+rope_scaling_type = Field(default=(llama_cpp.LLAMA_ROPE_SCALING_TYPE_UNSPECIFIED)) class-attribute instance-attribute
+
+rope_freq_base = Field(default=0.0, description='RoPE base frequency') class-attribute instance-attribute
+
+rope_freq_scale = Field(default=0.0, description='RoPE frequency scaling factor') class-attribute instance-attribute
+
+yarn_ext_factor = Field(default=(-1.0)) class-attribute instance-attribute
+
+yarn_attn_factor = Field(default=1.0) class-attribute instance-attribute
+
+yarn_beta_fast = Field(default=32.0) class-attribute instance-attribute
+
+yarn_beta_slow = Field(default=1.0) class-attribute instance-attribute
+
+yarn_orig_ctx = Field(default=0) class-attribute instance-attribute
+
+mul_mat_q = Field(default=True, description='if true, use experimental mul_mat_q kernels') class-attribute instance-attribute
+
+logits_all = Field(default=True, description='Whether to return logits.') class-attribute instance-attribute
+
+embedding = Field(default=False, description='Whether to use embeddings.') class-attribute instance-attribute
+
+offload_kqv = Field(default=True, description='Whether to offload kqv to the GPU.') class-attribute instance-attribute
+
+flash_attn = Field(default=False, description='Whether to use flash attention.') class-attribute instance-attribute
+
+last_n_tokens_size = Field(default=64, ge=0, description='Last n tokens to keep for repeat penalty calculation.') class-attribute instance-attribute
+
+lora_base = Field(default=None, description='Optional path to base model, useful if using a quantized base model and you want to apply LoRA to an f16 model.') class-attribute instance-attribute
+
+lora_path = Field(default=None, description='Path to a LoRA file to apply to the model.') class-attribute instance-attribute
+
+numa = Field(default=False, description='Enable NUMA support.') class-attribute instance-attribute
+
+chat_format = Field(default=None, description='Chat format to use.') class-attribute instance-attribute
+
+clip_model_path = Field(default=None, description='Path to a CLIP model to use for multi-modal chat completion.') class-attribute instance-attribute
+
+cache = Field(default=False, description='Use a cache to reduce processing times for evaluated prompts.') class-attribute instance-attribute
+
+cache_type = Field(default='ram', description='The type of cache to use. Only used if cache is True.') class-attribute instance-attribute
+
+cache_size = Field(default=(2 << 30), description='The size of the cache in bytes. Only used if cache is True.') class-attribute instance-attribute
+
+hf_tokenizer_config_path = Field(default=None, description='The path to a HuggingFace tokenizer_config.json file.') class-attribute instance-attribute
+
+hf_pretrained_model_name_or_path = Field(default=None, description='The model name or path to a pretrained HuggingFace tokenizer model. Same as you would pass to AutoTokenizer.from_pretrained().') class-attribute instance-attribute
+
+hf_model_repo_id = Field(default=None, description='The model repo id to use for the HuggingFace tokenizer model.') class-attribute instance-attribute
+
+draft_model = Field(default=None, description='Method to use for speculative decoding. One of (prompt-lookup-decoding).') class-attribute instance-attribute
+
+draft_model_num_pred_tokens = Field(default=10, description='Number of tokens to predict using the draft model.') class-attribute instance-attribute
+
+type_k = Field(default=None, description='Type of the key cache quantization.') class-attribute instance-attribute
+
+type_v = Field(default=None, description='Type of the value cache quantization.') class-attribute instance-attribute
+
+verbose = Field(default=True, description='Whether to print debug information.') class-attribute instance-attribute
+
+set_dynamic_defaults()
