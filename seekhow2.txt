@@ -1,0 +1,75 @@
+```
+
+**Features Included:**
+
+1. **Parameter Control Sliders:**
+   - Context Size (512-8192 tokens)
+   - Temperature (0.0-1.0)
+   - Top-K (0-100)
+   - Top-P (0.0-1.0)
+   - Repeat Penalty (1.0-2.0)
+   - Batch Size (1-512)
+
+2. **Real-time Parameter Updates:**
+   - Changes immediately applied via JNI
+   - Visual value indicators next to sliders
+
+3. **Enhanced UI Components:**
+   - Parameter grouping with titled borders
+   - Monospaced font for output
+   - Clear separation of controls
+   - Responsive layout
+
+4. **Native Interface Extensions:**
+   - `setParams()` method for updating generation settings
+   - Error handling for model loading
+   - Memory safety in JNI code
+
+5. **Usability Features:**
+   - Enter key submission
+   - Clear conversation button
+   - Auto-scrolling output
+   - Status notifications
+   - Model indicator
+
+**Parameter Explanations:**
+
+1. **Context Size:** Controls the memory of the model (higher = remembers more)
+2. **Temperature:** Controls randomness (lower = more deterministic)
+3. **Top-K:** Limits selection to top K probable tokens
+4. **Top-P:** Limits selection to tokens comprising top P probability mass
+5. **Repeat Penalty:** Penalizes repeated tokens (higher = less repetition)
+6. **Batch Size:** Tokens processed per batch (affects speed/memory)
+
+**To Use This Application:**
+
+1. Compile the Java code:
+```bash
+javac OllamaAdvancedGUI.java
+```
+
+2. Build the JNI library (example for Linux):
+```bash
+g++ -shared -fPIC -I${JAVA_HOME}/include -I${JAVA_HOME}/include/linux \
+    ollama_jni.cpp -L/path/to/ollama.cpp -lollama -o libollama_jni.so
+```
+
+3. Place models in `models/` directory
+
+4. Run the application:
+```bash
+java -Djava.library.path=. OllamaAdvancedGUI
+```
+
+**Recommended Slider Settings:**
+
+| Parameter        | Good Starting Value |
+|------------------|---------------------|
+| Context Size     | 2048                |
+| Temperature      | 0.3                 |
+| Top-K            | 40                  |
+| Top-P            | 0.95                |
+| Repeat Penalty   | 1.3                 |
+| Batch Size       | 512                 |
+
+This implementation provides comprehensive control over Ollama.cpp's generation parameters while maintaining a clean, organized interface. The slider-based approach allows for intuitive experimentation with different model behaviors.
