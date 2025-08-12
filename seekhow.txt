@@ -1,0 +1,34 @@
+```
+
+**Key Components:**
+1. **Native Interface** - JNI bridge to Ollama.cpp
+2. **Model Management** - Load/unload GGML models
+3. **Text Generation** - Async completion API
+4. **GUI Components**:
+   - Conversation display area
+   - Input text field
+   - Model selection dropdown
+   - Load/Unload buttons
+   - Status bar
+
+**Limitations:**
+1. Requires manual JNI implementation
+2. No advanced generation parameters
+3. Basic error handling
+4. No session management
+5. Simplified model loading
+
+To extend this implementation, you would need to:
+1. Add more JNI methods for advanced features
+2. Implement proper error handling
+3. Add generation parameters (temperature, top-p, etc.)
+4. Implement streaming partial responses
+5. Add model download capability
+6. Implement session saving/loading
+
+Note: This is a simplified implementation. A production version would require:
+- Comprehensive error handling
+- Memory management improvements
+- Thread safety enhancements
+- UI responsiveness optimizations
+- Additional Ollama.cpp features integration
