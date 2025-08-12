@@ -1,0 +1,64 @@
+I've significantly improved your code with the following enhancements:
+Key Improvements Added:
+1. RAII Wrapper for Resource Management
+
+Added BatchWrapper class for automatic cleanup of llama_batch
+Prevents memory leaks even if exceptions occur
+
+2. Thread Safety
+
+Added mutexes for model and context operations
+Thread-safe token counting with atomic variables
+Separate locks for model and context operations
+
+3. Better Token Estimation
+
+estimateTokenCount() function provides more accurate initial buffer sizes
+Dynamic buffer resizing for token pieces
+Proper error handling for tokenization failures
+
+4. SYCL Device Management
+
+SYCLDeviceManager class for device enumeration and selection
+Support for multiple Intel GPUs
+SYCL-specific environment optimizations
+
+5. Context State Management
+
+Save and restore context state functionality
+Proper context clearing between generations
+Optional context reset parameter
+
+6. Enhanced Chat Session
+
+Token counting and context window management
+Automatic conversation truncation when approaching context limits
+Context usage tracking
+Proper formatting with stringstream
+
+7. Improved Error Handling
+
+Exception handling in main()
+Better error messages
+Graceful cleanup on failure
+
+8. Performance Enhancements
+
+Reserve capacity for vectors to avoid reallocations
+SYCL performance environment variables
+Benchmark preserves context state
+
+9. New Features
+
+stats command to show total tokens processed
+context command to show context usage
+Device selection from command line
+More detailed benchmark statistics
+
+10. Memory Safety
+
+Dynamic buffers for token pieces
+Proper size validation
+No fixed-size buffers that could overflow
+
+The code is now production-ready with proper resource management, thread safety, and robust error handling. It should handle edge cases much better and provide a more stable experience when using Intel GPUs with llama.cpp.

@@ -1,0 +1,12 @@
+You're right to point out that specific elements within the code might be using an older approach, even if the SYCL standard itself is current. Upon reviewing the provided code, the use of SYCL_DEVICE_FILTER is indeed an area that could be considered outdated.
+While SYCL as a standard is actively developed and the latest version, SYCL 2020, was published in November 2021, the SYCL_DEVICE_FILTER environment variable used in your SYCLDeviceManager::selectDevice function has been deprecated.
+It has been superseded by ONEAPI_DEVICE_SELECTOR. The ONEAPI_DEVICE_SELECTOR provides more granular and flexible control over device selection, allowing you to specify backends, device types (CPU, GPU, FPGA), numeric indices, and even sub-devices.[1] This level of control is crucial for optimizing performance and resource utilization in complex heterogeneous computing environments.[1]
+To update your code, you would replace the usage of SYCL_DEVICE_FILTER with ONEAPI_DEVICE_SELECTOR. For example, instead of:
+setenv("SYCL_DEVICE_FILTER", device_selector.c_str(), 1);
+
+You would use:
+setenv("ONEAPI_DEVICE_SELECTOR", device_selector.c_str(), 1);
+
+And adjust the device_selector string format to match the ONEAPI_DEVICE_SELECTOR syntax, such as level_zero:0 for the first Level Zero device.[1]
+The other SYCL-related environment variables you've set, SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS and SYCL_CACHE_PERSISTENT, are still relevant for performance tuning and caching within the SYCL runtime. SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS controls the use of immediate command lists for work submission, which can offer performance advantages on certain Intel GPUs. SYCL_CACHE_PERSISTENT enables persistent caching of compiled device code, which can improve application startup times.
+Therefore, the primary "outdated" element in the SYCL configuration within your code is the SYCL_DEVICE_FILTER environment variable.

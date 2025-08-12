@@ -1,0 +1,171 @@
+To utilize an Intel Arc GPU with all its features (including hardware acceleration, deep learning, and media processing), follow these steps for **Ubuntu 22.04 LTS**. The process involves installing drivers, configuring the system, and setting up AI frameworks.
+
+---
+
+### Step 1: Install Intel GPU Drivers & Dependencies
+```bash
+# Add the Intel Graphics repository
+curl -fsSL https://repositories.intel.com/graphics/intel-graphics.key | \
+  sudo gpg --dearmor --output /usr/share/keyrings/intel-graphics.gpg
+echo "deb [arch=amd64,i386 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/graphics/ubuntu jammy arc" | \
+  sudo tee /etc/apt/sources.list.d/intel-gpu-jammy.list
+
+# Install dependencies and drivers
+sudo apt update
+sudo apt install -y \
+  intel-opencl-icd intel-level-zero-gpu level-zero \
+  intel-media-va-driver-non-free libmfx1 libmfxgen1 libvpl2 \
+  libegl-mesa0 libegl1-mesa libegl1-mesa-dev libgbm-dev libgl1-mesa-dev \
+  libgl1-mesa-glx libglapi-mesa libgles2-mesa-dev libglx-mesa0 \
+  mesa-va-drivers mesa-vulkan-drivers
+```
+
+---
+
+### Step 2: Install oneAPI Base Toolkit
+```bash
+# Add Intel oneAPI repository
+wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | \
+  gpg --dearmor | sudo tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
+echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | \
+  sudo tee /etc/apt/sources.list.d/oneAPI.list
+
+# Install oneAPI components
+sudo apt update
+sudo apt install -y intel-basekit intel-hpckit
+```
+
+---
+
+### Step 3: Configure Runtime Environment
+Add these lines to `~/.bashrc`:
+```bash
+# oneAPI environment
+source /opt/intel/oneapi/setvars.sh > /dev/null
+
+# Enable GPU acceleration
+export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH}
+export LIBVA_DRIVER_NAME=iHD
+export VPL_GPU=GPU
+export SYCL_CACHE_PERSISTENT=1
+```
+
+Reload the configuration:
+```bash
+source ~/.bashrc
+```
+
+---
+
+### Step 4: Install AI Frameworks with Intel Extensions
+
+#### PyTorch with IPEX (Intel Extension):
+```bash
+pip install torch==2.0.1a0 torchvision==0.15.2a0 intel_extension_for_pytorch==2.0.110+xpu \
+  --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/
+```
+
+#### TensorFlow with Intel Optimization:
+```bash
+pip install tensorflow==2.12.0
+pip install --upgrade intel-extension-for-tensorflow[gpu]
+```
+
+---
+
+### Step 5: Verify GPU Functionality
+
+#### Check Media Acceleration:
+```bash
+sudo apt install -y vainfo
+vainfo  # Should show "VAEntrypointVLD" (hardware decoding)
+```
+
+#### PyTorch Test Script:
+```python
+import torch
+import intel_extension_for_pytorch as ipex
+
+print(f"PyTorch Version: {torch.__version__}")
+print(f"Intel XPU Available: {torch.xpu.is_available()}")
+print(f"XPU Device Name: {torch.xpu.get_device_name(0)}")
+
+# Test computation
+x = torch.randn(1000, 1000).xpu()
+y = torch.mm(x, x)
+print("Computation successful!" if y.any() else "Error")
+```
+
+#### TensorFlow Test Script:
+```python
+import tensorflow as tf
+from tensorflow.python.client import device_lib
+
+print(f"TensorFlow Version: {tf.__version__}")
+print("Devices:", device_lib.list_local_devices())
+
+# Verify GPU
+if tf.config.list_physical_devices('GPU'):
+    print("Intel GPU detected!")
+else:
+    print("GPU not found")
+```
+
+---
+
+### Step 6: Enable Hardware Video Encoding/Decoding
+For tools like FFmpeg:
+```bash
+sudo apt install -y ffmpeg
+ffmpeg -hwaccel vaapi -hwaccel_device /dev/dri/renderD128 -i input.mp4 -c:v hevc_vaapi output.mp4
+```
+
+---
+
+### Troubleshooting Tips:
+1. **Permission Issues**: Add your user to the `video` and `render` groups:
+   ```bash
+   sudo usermod -aG video,vrender $USER
+   ```
+2. **Driver Conflicts**: Remove third-party GPU drivers (NVIDIA/AMD).
+3. **Kernel Requirements**: Use Linux kernel **≥ 6.2** for full Arc support:
+   ```bash
+   sudo apt install --install-recommends linux-generic-hwe-22.04
+   ```
+4. **Resizable BAR**: Enable in BIOS for optimal performance.
+
+---
+
+### Full Stack Diagram:
+```
++-----------------------+
+|   AI Frameworks       |
+|  (PyTorch/TensorFlow) |
++----------+------------+
+           |
++----------v------------+
+|  Intel Extensions     |
+| (IPEX/ITEX) for GPU   |
++----------+------------+
+           |
++----------v------------+
+|  oneAPI Libraries     |
+| (oneDNN, oneMKL, etc) |
++----------+------------+
+           |
++----------v------------+
+|  Intel GPU Drivers    |
+| (OpenCL, Level Zero)  |
++----------+------------+
+           |
++----------v------------+
+|  Linux Kernel (≥6.2)  |
+|  & Hardware (Intel Arc)|
++-----------------------+
+```
+
+This setup unlocks:
+- Hardware-accelerated AI training/inference
+- Media encoding/decoding (AV1, HEVC, H.264)
+- GPU compute via SYCL/OpenCL
+- Full performance with Resizable BA
